@@ -34,8 +34,21 @@ class AudioClassifier {
             }
         }
 
-        this.context = new AudioContext();
-
+        
+        try {
+            this.context = new (window.AudioContext || window.webkitAudioContext)();
+            
+        
+            // AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (this.context == undefined) {
+                this.context = new AudioContext();
+                this.context = this.context || new AudioContext();
+            }
+          } catch (e) {
+            console.warn('Web Audio API is not supported in this browser');
+        }
+        
+        
         this.synthesizer = {};
         this.synthesizer.out = this.context.createGain();
 
@@ -319,7 +332,7 @@ class AudioClassifier {
         let that = this;
 
         function errorCallback(err) {
-            throw err;
+            // throw err;
         }
 
         function successCallback(mediaStream) {
